@@ -14,7 +14,7 @@ app.post("/signup", async (req, res) => {
         res.send("user added successfully")
     }
     catch (err) {
-        res.status(500).send("something went wrong")
+        res.status(500).send("Error" + err.message)
     }
     
     res.send("User sent")
@@ -70,10 +70,14 @@ app.delete("/user", async (req, res) => {
 
 app.patch("/user", async (req, res) => {
     try{
-        const userName = req.body.firstName
-        const newAge = req.body.newAge
-        await User.updateOne({ firstName: userName }, { age: newAge })
+        const userId = req.body._id
+        const data = req.body
+        await User.findByIdAndUpdate({ id }, data, {
+            returnDocument: "after",
+            runValidators : true,
+        },)
         res.send("User updated")
+        
     }
     catch (err) {
         res.send("User not updated")
