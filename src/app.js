@@ -8,16 +8,25 @@ const user = require("./models/user");
 app.use(express.json())
 
 app.post("/signup", async (req, res) => {
-    const user = new User(req.body)
-    try {
+    try { 
+        const SIGNUP_ALLOWED = ["firstName", "lastName", "email", "password", "age", "gender", "skills", "about", "photoUrl"]
+        const user = new User(req.body) 
+        const data = req.body
+        const isSignupAllowed = Object.keys(data).every((k) => SIGNUP_ALLOWED.includes(k))
+
+        if (!isSignupAllowed) {
+            throw new Error("Please include the data as per the requirements")
+        }
+
+        if (user.skills.length > 10) {
+            throw new Error("You cannot add more than 10 skills")
+        }
         await user.save() 
         res.send("user added successfully")
     }
     catch (err) {
         res.status(500).send("Error" + err.message)
     }
-    
-    res.send("User sent")
 })
 
 app.get("/user", async (req, res) => {
@@ -68,11 +77,24 @@ app.delete("/user", async (req, res) => {
     }
 })
 
-app.patch("/user", async (req, res) => {
-    try{
-        const userId = req.body._id
+app.patch("/user/:userId", async (req, res) => {
+    try {
+        const userId = req.params?.userId
         const data = req.body
-        await User.findByIdAndUpdate({ id }, data, {
+        const ALLOWED_UPDATES = ["id", "password", "age", "skills", "photoUrl", "about"]
+        const isUpdateAllowed = Object.keys(data).every((k) => 
+         ALLOWED_UPDATES.includes(k)
+        )
+
+        if (data.skills.length > 10) {
+            throw new Error("Skills should not exceed 10")
+        }
+
+        if (!isUpdateAllowed) {
+            throw new Error("update not allowed")
+        }
+ 
+        await User.findByIdAndUpdate({ _id : userId }, data, {
             returnDocument: "after",
             runValidators : true,
         },)
@@ -80,7 +102,7 @@ app.patch("/user", async (req, res) => {
         
     }
     catch (err) {
-        res.send("User not updated")
+        res.send("error: " + err.message)
     }
 })
 
