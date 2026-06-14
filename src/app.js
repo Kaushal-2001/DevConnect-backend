@@ -3,29 +3,20 @@ const { connectDB } = require("./config/database")
 const app = express();
 const User = require("./models/user");
 const user = require("./models/user");
+const {validateSignupData} = require("./utils/validate")
 
 
 app.use(express.json())
 
 app.post("/signup", async (req, res) => {
     try { 
-        const SIGNUP_ALLOWED = ["firstName", "lastName", "email", "password", "age", "gender", "skills", "about", "photoUrl"]
+        validateSignupData(req)
         const user = new User(req.body) 
-        const data = req.body
-        const isSignupAllowed = Object.keys(data).every((k) => SIGNUP_ALLOWED.includes(k))
-
-        if (!isSignupAllowed) {
-            throw new Error("Please include the data as per the requirements")
-        }
-
-        if (user.skills.length > 10) {
-            throw new Error("You cannot add more than 10 skills")
-        }
         await user.save() 
         res.send("user added successfully")
     }
     catch (err) {
-        res.status(500).send("Error" + err.message)
+        res.status(400).send("Error: " + err.message)
     }
 })
 
