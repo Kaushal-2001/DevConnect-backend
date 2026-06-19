@@ -1,25 +1,29 @@
-const adminAuth = (req, res, next) => {
-    console.log("Admin auth is getting checked")
-    const token = "7717abc"
-    const authAdmin = token === "7717abc"
-    if (!authAdmin) {
-        res.status(401).send("Unauthorized request")
-    }
-    else {
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
+const User = require("../models/user")
+
+const userAuth = async (req, res, next) => {
+    
+    try {
+        const { token } = req.cookies
+        if (!token) {
+            throw new Error("token not found")
+        }
+        
+        const decodedData = await jwt.verify(token, process.env.JWT_SECRET)
+        const { id } = decodedData
+        const user = await User.findById({ _id : id })
+        
+        if (!user) {
+            throw new Error("user not found")
+        }
+        req.user = user
         next()
     }
+    catch(err) {
+        res.status(400).send("Err: " +  err.message)
+    }
+
 }
 
-const userAuth = (req, res, next) => {
-    console.log("User auth is getting checked")
-    const token = "7717abc"
-    const authUser = token === "7717abc"
-    if (!authUser) {
-        res.status(401).send("Unauthorized request")
-    }
-    else {
-        next()
-    }
-}
-
-module.exports = {adminAuth, userAuth}
+module.exports = { userAuth, }
