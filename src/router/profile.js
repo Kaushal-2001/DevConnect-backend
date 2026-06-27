@@ -1,14 +1,13 @@
 const express = require("express")
 const { userAuth } = require("../middlewares/auth")
-const user = require("../models/user");
 const User = require("../models/user");
 const { validateEditProfileData } = require("../utils/validate")
 
 const profileRouter = express.Router()
 
 profileRouter.get("/profile", userAuth, async (req, res) => {
-    const user  = req.user
-    res.send(user)
+    const loggedInUser  = req.user
+    res.send(loggedInUser)
 })
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
