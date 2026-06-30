@@ -26,7 +26,6 @@ requestRouter.post(
       }
 
       const toUser = await User.findById(toUserId);
-      console.log(toUser);
       if (!toUser) {
         throw new Error("User not found");
       }
