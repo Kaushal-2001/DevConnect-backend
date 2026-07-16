@@ -17,7 +17,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     if (connectionRequests.length === 0) {
       throw new Error("No connection requests found");
     }
-    res.send(connectionRequests);
+    res.json(connectionRequests);
   } catch (err) {
     res.status(400).send("Err: " + err.message);
   }
