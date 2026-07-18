@@ -14,9 +14,6 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
       toUserId: loggedInUser._id,
       status: "interested",
     }).populate("fromUserId", SAFE_USER_DETAILS);
-    if (connectionRequests.length === 0) {
-      throw new Error("No connection requests found");
-    }
     res.json(connectionRequests);
   } catch (err) {
     res.status(400).send("Err: " + err.message);
