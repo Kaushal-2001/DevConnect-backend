@@ -46,10 +46,10 @@ requestRouter.post(
         toUserId,
         status,
       });
-      const conncetionRequestData = await connectionrequest.save();
+      const connectionRequestData = await connectionrequest.save();
       const emailRes = await sendEmail.run()
       console.log(emailRes)
-      res.json(conncetionRequestData);
+      res.json(connectionRequestData);
     } catch (err) {
       res.status(400).send("Err: " + err.message);
     }
