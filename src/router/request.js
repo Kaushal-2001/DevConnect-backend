@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { userAuth } = require("../middlewares/auth");
 const User = require("../models/user");
 const ConnectionRequest = require("../models/connectionRequest");
+const sendEmail = require("../utils/sendEmail")
 
 const requestRouter = express.Router();
 
@@ -46,16 +47,19 @@ requestRouter.post(
         status,
       });
       const conncetionRequestData = await connectionrequest.save();
+      const emailRes = await sendEmail.run()
+      console.log(emailRes)
       res.json(conncetionRequestData);
     } catch (err) {
       res.status(400).send("Err: " + err.message);
     }
   },
+
 );
 
 requestRouter.post(
   "/request/review/:status/:requestId",
-  userAuth,
+  userAuth, 
   async (req, res) => {
     try {
       const loggedInUser = req.user;
