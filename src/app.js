@@ -9,6 +9,8 @@ const { profileRouter } = require("./router/profile");
 const { requestRouter } = require("./router/request");
 const { userRouter } = require("./router/user");
 
+require("./utils/cronJob")
+
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,
